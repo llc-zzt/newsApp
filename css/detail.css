@@ -1,0 +1,27 @@
+.detail-article-info{
+	display: inline-block;
+}
+
+.kr-article-meta1{
+	padding: 10px 15px;
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kr-article-meta1 div {
+    font-size: 15px;
+    display: table-cell;
+    vertical-align: middle;
+    color: gray;
+}
+
+.detail-article-title{
+	padding: 0 15px;
+	font-size: 24px;
+    line-height: initial;
+}
+
+.datail-article-time{
+	padding: 0 5px;
+}

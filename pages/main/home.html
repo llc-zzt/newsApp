@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/home.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		
+		<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				
+				<!--数据列表-->
+				<ul id="home-ul" class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<a href="javascript:;"  onclick="goDetail(1537339603429,3)">
+							<div>
+								<div>
+								<p class="news-title">
+									hhhhhhhhhh
+								</p>
+							</div>
+							<div>
+								<img width="32.5%" style="border-radius: 5px;" src="../../imgs/timg.jpg" />
+								<img width="32.5%" style="border-radius: 5px;" src="../../imgs/timg.jpg" />
+								<img width="32.5%" style="border-radius: 5px;" src="../../imgs/timg.jpg" />
+							</div>
+							<div class="news-info">
+								<span>娱乐</span>
+								<span>
+								<img width="20px" height="20px" style="border-radius: 50%;vertical-align: top;" src="../../imgs/timg.jpg" />
+									</span>
+								<span>3k少年</span>
+								<span>10条评论</span>
+							</div>
+							</div>
+						</a>
+					</li>
+				
+						<li class="mui-table-view-cell">
+							<a href="javascript:;"  onclick="goDetail(1537339603429,3)">
+								<div>
+									<p class="news-title">
+										hhhhhhhhhh
+									</p>
+								</div>
+								<div>
+									<video width="100%" controls="controls" poster="../../imgs/timg.jpg">
+									</video>
+								</div>
+								<div class="news-info">
+									<span>娱乐</span>
+									<span>
+								<img width="20px" height="20px" style="border-radius: 50%;vertical-align: top;" src="../../imgs/timg.jpg" />
+									</span>
+									<span>3k少年</span>
+									<span>10条评论</span>
+								</div>
+							</a>
+						</li>
+						
+						<li onclick="goDetail()">
+							<div>
+									<img src="../../imgs/timg.jpg" width="100%" />
+								</div>
+						</li>
+					</ul>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				pullRefresh: {
+					container: '#refreshContainer',
+					down: {
+						height: 50, //可选,默认50.触发下拉刷新拖动距离,
+						//						auto: true, //可选,默认false.首次加载自动下拉刷新一次
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
+
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				setTimeout(function() {
+					mui('#refreshContainer').pullRefresh().endPulldownToRefresh(); //refresh completed
+					mui.ajax('http://news.immnc.com:8888/api/homePage/random/article', {
+						data: {
+
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							console.log(data.data)
+							//false 值加在最前面
+							addList(data,false)
+							
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							console.log(type);
+						}
+					});
+				}, 1500);
+			}
+			var count = 0;
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			var nowPage = 0
+
+			function pullupRefresh() {
+				setTimeout(function() {
+					var moreFlag = false
+					mui.ajax('http://news.immnc.com:8888/api/homePage/index/article', {
+						data: {
+							'page': nowPage + 1,
+							'size': 10
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+				
+							if(data.data.article.pageContent.length < 10) {
+								moreFlag = true
+							}
+							nowPage = data.data.article.currentPage
+							//true 值加在最后
+							addList(data,true)
+							
+
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							console.log(type);
+						}
+					}, JSON);
+					mui('#refreshContainer').pullRefresh().endPullupToRefresh(moreFlag);
+
+				}, 1500);
+			}
+			
+			
+			function addList(data,listFlag){
+				var table = document.body.querySelector('.mui-table-view');
+							var data_temp = data.data.article.pageContent
+							for(var i = 0; i < data_temp.length; i++) {
+								var html_li = document.createElement('li');
+								html_li.className = 'mui-table-view-cell';
+								if(data_temp[i].type == 1) {
+									html_li.innerHTML = '<a href="javascript:;" onclick = "goDetail('+data_temp[i].id+',1)">' +
+										'<div>' +
+										'<div class="list-left">' +
+										'<p class="news-title">' + data_temp[i].title + '</p>' +
+										'<div class = "news-info">' +
+										'	<span>' + data_temp[i].sort + '</span>' +
+										'	<span>' +
+										'		<img width="20px" height="20px" style="border-radius: 50%;vertical-align: top;" src="' + data_temp[i].avatar + '" />' +
+										'	</span>' +
+										'	<span>' + data_temp[i].author.name + '</span>' +
+										'	<span>' + data_temp[i].commentNum + '</span>' +
+										'</div>' +
+										'</div>' +
+										'<div class="list-right" style="display: inline-block;vertical-align: top">' +
+										'	<img width="30%" src="' + data_temp[i].img[0] + '" />' +
+										'</div>' +
+										'</div>' +
+										'</a>'
+								}
+								if(data_temp == 2) {
+									html_li.innerHTML = '<a href="javascript:;" onclick = "goDetail('+data_temp[i].id+',2)">'+
+														'	<div>'+
+														'		<p class="news-title">' + data_temp[i].title + '</p>'+
+														'	</div>'+
+														'	<div>'+
+														'		<img width="32.5%" style="border-radius: 5px;" src="' + data_temp[i].img[0] + '" />'+
+														'		<img width="32.5%" style="border-radius: 5px;" src="' + data_temp[i].img[1] + '" />'+
+														'		<img width="32.5%" style="border-radius: 5px;" src="' + data_temp[i].img[2] + '" />'+
+														'	</div>'+
+														'	<div class="news-info">'+
+														'		<span>' + data_temp[i].sort + '</span>'+
+														'		<span>'+
+														'		<img width="20px" height="20px" style="border-radius: 50%;vertical-align: top;" src="' + data_temp[i].avatar + '" />'+
+														'			</span>'+
+														'		<span>' + data_temp[i].author.name + '</span>'+
+														'		<span>' + data_temp[i].commentNum + '条评论</span>'+
+														'	</div>'+
+														'</a>'
+								}
+								if(data_temp == 3) {
+									html_li.innerHTML = '<a href="javascript:;" onclick = "goDetail('+data_temp[i].id+',3)">'+
+														'	<div>'+
+														'		<p class="news-title">' + data_temp[i].title + '</p>'+
+														'	</div>'+
+														'	<div>'+
+														'		<video width="100%" controls="controls" poster="'+data_temp[i].img[0]+'"></video>'+
+														'	</div>'+
+														'	<div class="news-info">'+
+														'		<span>' + data_temp[i].sort + '</span>'+
+														'		<span>'+
+														'	<img width="20px" height="20px" style="border-radius: 50%;vertical-align: top;" src="' + data_temp[i].avatar + '" />'+
+														'		</span>'+
+														'		<span>' + data_temp[i].author.name + '</span>'+
+														'		<span>' + data_temp[i].commentNum + '条评论</span>'+
+														'	</div>'+
+														'</a>'
+								}
+
+								if(listFlag){
+									table.appendChild(html_li)
+								}else{
+									table.insertBefore(html_li, table.firstChild);
+								}
+								
+							}
+
+			}
+		
+			function goDetail(articleId,type){
+				console.log("ttttttttt")
+				/*if(type == 1){
+					console.log(111111111)
+					window.location.href = "detail/articleDetail.html?articleId=" + articleId
+				}
+				if(type == 2){
+					window.location.href = "detail/imgDetail.html?articleId=" + articleId
+				}
+				if(type == 3){
+					window.location.href = "detail/videoDetail.html?articleId=" + articleId
+				}*/
+			
+				
+			}
+		
+		</script>
+	</body>
+
+</html>

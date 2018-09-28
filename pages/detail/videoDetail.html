@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/detail.css" />
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+			<div class="detail-article-title">{{title}}</div>
+			<div class="kr-article-content">
+				<!-- 文章作者、发布时间等信息 -->
+				<div class="kr-article-meta1">
+					<div>
+						<div class="detail-article-info">
+							<img style="border-radius: 50%;" height="30px" width="30px" src="../../imgs/timg.jpg" />
+						</div>
+
+						<div class="detail-article-info" style="padding: 0 5px;">
+							<div style="display: block;" class="detail-author-name">
+								3k少年
+							</div>
+
+							<div>
+								<div class="datail-article-sort">
+									游戏
+								</div>
+
+								<div class="datail-article-time">
+									2018-09-20 18:52:42
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="detail-article-info">
+						<div class="detail-article-collected">
+							已关注
+						</div>
+					</div>
+
+				</div>
+				<!--文章详细内容-->
+				<div id="kr-article-article" class="kr-article-article" >
+					<video autoplay="autoplay" id="videoDetail" controls="controls" width="100%">
+						<source id="videoSrc" src="" type="audio/mp4"></source>
+					</video>
+				</div>
+			</div>
+
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.min.js"></script>
+		<script>
+			mui.init();
+
+			function getDefaultData() {
+				return {
+					cover: '',
+					title: '',
+					author: '',
+					time: '',
+					content: ''
+				}
+			}
+
+			var vm = new Vue({
+				el: '.mui-content',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() { //重置数据
+						Object.assign(this.$data, getDefaultData());
+					}
+				}
+			});
+			//测试
+			window.onload = contentFun
+
+			function contentFun() {
+				var url = 'http://news.immnc.com:8888/api/article/details'
+				mui.ajax(url, {
+					data: {
+						articleId: '1537339603429'
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					success: function(data) {
+						//服务器返回响应，根据响应结果，分析是否登录成功；
+
+						console.log(data)
+						vm.title = data.data.articleDetails.title
+						document.getElementById("videoSrc").src = 'https://p0.cdrysj.com/po' + data.data.articleDetails.content
+						document.getElementById("videoDetail").load()
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+					}
+				}, JSON);
+			}
+		</script>
+	</body>
+
+</html>

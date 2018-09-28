@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.mui-bar~.mui-content .mui-fullscreen {
+				top: 44px;
+				height: auto;
+			}
+			
+			.mui-pull-top-tips {
+				position: absolute;
+				top: -20px;
+				left: 50%;
+				margin-left: -25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				z-index: 1;
+			}
+			
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			
+			.mui-pull-top-wrapper {
+				width: 42px;
+				height: 42px;
+				display: block;
+				text-align: center;
+				background-color: #efeff4;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				box-shadow: 0 4px 10px #bbb;
+				overflow: hidden;
+			}
+			
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			
+			.mui-pull-top-tips .mui-pull-loading {
+				/*-webkit-backface-visibility: hidden;
+				-webkit-transition-duration: 400ms;
+				transition-duration: 400ms;*/
+				margin: 0;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon.mui-reverse {
+				/*-webkit-transform: rotate(180deg) translateZ(0);*/
+			}
+			
+			.mui-pull-bottom-tips {
+				text-align: center;
+				background-color: #efeff4;
+				font-size: 15px;
+				line-height: 40px;
+				color: #777;
+			}
+			
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			
+			.mui-slider-indicator.mui-segmented-control {
+				background-color: #efeff4;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<!--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>-->
+			<h1 class="mui-title">首页</h1>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<div id="classify" class="mui-scroll">
+						
+							<a class="mui-control-item mui-active" href="#item1mobile" data-wid="listview">
+							推荐
+							</a>
+							
+						
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			mui.init();
+
+			mui.plusReady(function() {
+
+				var arr_item = new Array()
+				var _self;
+				//获取分类
+				mui.ajax('http://news.immnc.com:8888/api/homePage/android/nav', {
+					data: {
+
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						var classifyList = data.data.indexNavigation
+						var tab = document.getElementById('classify')
+
+						arr_item.push({
+							id: "listview",
+							url: "listview.html",
+							extras: {
+								"type": 0
+							}
+						})
+						for(var i = 0; i < classifyList.length; i++) {
+							var cla_html = document.createElement("span")
+							cla_html.innerHTML = '<a class="mui-control-item" href="#item1mobile1" data-wid="listview' + classifyList[i].id + '">' + classifyList[i].title + '</a>'
+							tab.appendChild(cla_html)
+
+							var item = {
+								id: "listview" + classifyList[i].id,
+								url: "listview.html",
+								extras: {
+									"type": classifyList[i].id
+								}
+							}
+							arr_item.push(item)
+						}
+
+						_self = plus.webview.currentWebview();
+						var group = new webviewGroup(_self.id, {
+							items: arr_item,
+							onChange: function(obj) {
+								var c = document.querySelector(".mui-control-item.mui-active");
+//								console.log(c)
+								if(c) {
+									c.classList.remove("mui-active");
+								}
+								var target = document.querySelector(".mui-scroll .mui-control-item:nth-child(" + (parseInt(obj.index) + 1) + ")");
+								var aa = document.querySelector(".mui-scroll .mui-control-item");
+								
+								target.classList.add("mui-active");
+								if(target.scrollIntoView) {
+									target.scrollIntoView();
+								}
+							}
+						});
+
+						mui(".mui-scroll").on("tap", ".mui-control-item", function(e) {
+							var wid = this.getAttribute("data-wid");
+							group.switchTab(wid);
+						});
+
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+					}
+				});
+
+			});
+
+			mui.back = function() {
+				var _self = plus.webview.currentWebview();
+				_self.close("auto");
+			}
+			
+		</script>
+	</body>
+
+</html>

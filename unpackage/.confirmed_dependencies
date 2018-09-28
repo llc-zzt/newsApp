@@ -1,0 +1,68 @@
+{
+	"index.html": {
+		"resources": [
+			"pages/home.html",
+			"pages/list-to-detail/listview.html",
+			"pages/list-to-detail/tab-top-webview-main.html",
+			"pages/detail/tab-top-webview-main.html",
+			"pages/list/tab-top-webview-main.html"
+		],
+		"refer": [
+			"pages/personal.html",
+			"pages/video.html",
+			"pages/dynamic.html",
+			"pages/home.html",
+			"pages/list-to-detail/listview.html",
+			"pages/list-to-detail/tab-top-webview-main.html",
+			"pages/list-to-detail/video.html",
+			"pages/detail/tab-top-webview-main.html",
+			"pages/main/dynamic.html",
+			"pages/main/personal.html",
+			"pages/list/tab-top-webview-main.html",
+			"pages/main/video.html"
+		]
+	},
+	"pages/list-to-detail/listview.html": {
+		"refer": [
+			"pages/list-to-detail/detail.html"
+		]
+	},
+	"pages/list-to-detail/tab-top-webview-main.html": {
+		"resources": [
+			"pages/list-to-detail/tab-top-subpage-1.html",
+			"pages/list-to-detail/listview.html"
+		],
+		"refer": [
+			"pages/list-to-detail/tab-top-subpage-3.html",
+			"pages/list-to-detail/tab-top-subpage-1.html",
+			"pages/list-to-detail/tab-top-subpage-2.html",
+			"pages/list-to-detail/tab-top-subpage-4.html",
+			"pages/list-to-detail/tab-top-subpage-5.html",
+			"pages/list-to-detail/listview.html"
+		]
+	},
+	"pages/list-to-detail/video.html": {
+		"refer": [
+			"pages/list-to-detail/detail.html"
+		]
+	},
+	"pages/detail/tab-top-webview-main.html": {
+		"resources": [
+			"pages/detail/tab-top-subpage-1.html"
+		],
+		"refer": [
+			"pages/detail/tab-top-subpage-1.html",
+			"pages/detail/tab-top-subpage-2.html",
+			"pages/detail/tab-top-subpage-3.html",
+			"pages/detail/tab-top-subpage-4.html"
+		]
+	},
+	"pages/list/tab-top-webview-main.html": {
+		"resources": [
+			"pages/list/listview.html"
+		],
+		"refer": [
+			"pages/list/listview.html"
+		]
+	}
+}
